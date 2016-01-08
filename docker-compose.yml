@@ -1,0 +1,21 @@
+web:
+  build: .
+  ports:
+    - "50080:80"
+    - "50022:22"
+  volumes:
+    - ../src/:/var/www
+  links:
+    - mysqld
+mysqld:
+  image: dgraziotin/mysql 
+  ports:
+    - "53306:3306"
+  volumes: 
+    - ../mysql:/var/lib/mysql
+  environment:
+    MYSQL_ADMIN_PASS: alma
+    CREATE_MYSQL_BASIC_USER_AND_DB: "true"
+    MYSQL_USER_NAME: admin
+    MYSQL_USER_PASS: gbwebdesign
+    MYSQL_USER_DB: db

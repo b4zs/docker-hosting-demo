@@ -1,20 +1,53 @@
-FROM ubuntu:latest
-MAINTAINER b4zs@b4zs.com
+FROM phusion/baseimage:latest
+MAINTAINER Balazs Varga <b4zs@b4zs.com>
 
-RUN apt-get update && apt-get install -y openssh-server apache2 supervisor php5 mysql-server curl php5-mysql php5-curl php5-xdebug php5-intl php5-gd php5-imagick php5-mcrypt vim mc git
-RUN apt-get install -y pure-ftpd
-RUN mkdir -p /var/lock/apache2 /var/run/apache2 /var/run/sshd /var/log/supervisor
-RUN useradd  -ms /bin/bash b4zs -u 1000
-RUN echo 'b4zs ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-RUN echo 'b4zs:kamelot'|chpasswd
+# based on dgraziotin/osx-docker-lamp
+# MAINTAINER Daniel Graziotin <daniel@ineed.coffee>
 
+ENV DOCKER_USER_ID 501 
+ENV DOCKER_USER_GID 20
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-RUN  mkdir /root/bin
-COPY root/bin/* /root/bin/
+ENV BOOT2DOCKER_ID 1000
+ENV BOOT2DOCKER_GID 50
 
+# Tweaks to give Apache/PHP write permissions to the app
+RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
+    usermod -G staff www-data 
 
+RUN groupmod -g $(($BOOT2DOCKER_GID + 10000)) $(getent group $BOOT2DOCKER_GID | cut -d: -f1)
+RUN groupmod -g ${BOOT2DOCKER_GID} staff
 
+# Install packages
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && \
+  apt-get -y install supervisor wget git apache2 libapache2-mod-php5 php5-mysql pwgen php-apc php5-mcrypt zip unzip  && \
+  echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-EXPOSE 21 22 80 8080 3306
-CMD ["/usr/bin/supervisord"]
+# needed for phpMyAdmin
+run php5enmod mcrypt
+
+# Add image configuration and scripts
+ADD start-apache2.sh /start-apache2.sh
+ADD run.sh /run.sh
+RUN chmod 755 /*.sh
+ADD supervisord-apache2.conf /etc/supervisor/conf.d/supervisord-apache2.conf
+
+# Add phpmyadmin
+RUN apt-get install -y phpmyadmin
+
+# config to enable .htaccess
+ADD apache_default /etc/apache2/sites-available/000-default.conf
+RUN a2enmod rewrite
+
+# Configure /app folder with sample app
+RUN mkdir -p /app && rm -fr /var/www/html && ln -s /app /var/www/html
+
+#Environment variables to configure php
+ENV PHP_UPLOAD_MAX_FILESIZE 10M
+ENV PHP_POST_MAX_SIZE 10M
+
+# Add volumes for the app 
+VOLUME  [ "/app" ]
+
+EXPOSE 80
+CMD ["/run.sh"]
