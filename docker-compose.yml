@@ -7,6 +7,8 @@ apache:
       - data
   links:
     - mysql
+  environment:
+    VIRTUAL_HOST: app.proxy
 mysql:
   image: dgraziotin/mysql
   ports:
@@ -23,3 +25,18 @@ data:
   image: phusion/baseimage:latest
   volumes:
     - ./src/:/app
+proxy:
+  image: jwilder/nginx-proxy
+  ports:
+    - 80:80
+  links:
+    - apache
+    - helloworld
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+helloworld:
+  image: tutum/hello-world
+  environment:
+      VIRTUAL_HOST: hello.proxy
+
+
