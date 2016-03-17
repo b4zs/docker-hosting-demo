@@ -3,8 +3,8 @@ apache:
   ports:
     - "50080:80"
     - "50022:22"
-  volumes_from:
-      - data
+  volumes:
+      - ./src:/app
   links:
     - mysql
   environment:
@@ -21,10 +21,6 @@ mysql:
     MYSQL_USER_NAME: usr
     MYSQL_USER_PASS: pwd
     MYSQL_USER_DB: db
-data:
-  image: phusion/baseimage:latest
-  volumes:
-    - ./src/:/app
 proxy:
   image: jwilder/nginx-proxy
   ports:
