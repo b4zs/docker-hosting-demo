@@ -1,21 +1,25 @@
-web:
-  build: .
+apache:
+  build: images/apache-php/
   ports:
     - "50080:80"
     - "50022:22"
-  volumes:
-    - ../src/:/var/www
+  volumes_from:
+      - data
   links:
-    - mysqld
-mysqld:
-  image: dgraziotin/mysql 
+    - mysql
+mysql:
+  image: dgraziotin/mysql
   ports:
     - "53306:3306"
   volumes: 
-    - ../mysql:/var/lib/mysql
+    - ./var/mysql:/var/lib/mysql
   environment:
-    MYSQL_ADMIN_PASS: alma
+    MYSQL_ADMIN_PASS: gbwebdesign
     CREATE_MYSQL_BASIC_USER_AND_DB: "true"
-    MYSQL_USER_NAME: admin
-    MYSQL_USER_PASS: gbwebdesign
+    MYSQL_USER_NAME: usr
+    MYSQL_USER_PASS: pwd
     MYSQL_USER_DB: db
+data:
+  image: phusion/baseimage:latest
+  volumes:
+    - ./src/:/app

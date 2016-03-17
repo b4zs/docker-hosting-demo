@@ -17,4 +17,19 @@ else
     chown -R www-data:staff /app
 fi
 
+#configure phpmyadmin
+echo "\$dbserver=\"mysql\";                     " >> /etc/phpmyadmin/config-db.php
+echo "\$dbuser=\"admin\";    " >> /etc/phpmyadmin/config-db.php
+echo "\$dbpass='$MYSQL_ENV_MYSQL_ADMIN_PASS';   " >> /etc/phpmyadmin/config-db.php
+
+echo "\$cfg['Servers'][1]['user'] = \$dbuser;" >> /etc/phpmyadmin/config.inc.php
+echo "\$cfg['Servers'][1]['password'] = \$dbpass;" >> /etc/phpmyadmin/config.inc.php
+echo "\$cfg['Servers'][1]['auth_type'] = 'config';" >> /etc/phpmyadmin/config.inc.php
+
+
+
+echo "======================================================================="
+echo "Webserver url: http://`hostname -I`"
+echo "======================================================================="
+
 exec supervisord -n
