@@ -21,8 +21,8 @@ RUN groupmod -g ${BOOT2DOCKER_GID} staff
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
   apt-get -y install \
-      supervisor wget git apache2 libapache2-mod-php5 \
-      php5-mysql php5-curl php5-xdebug php5-intl php5-gd php5-imagick php5-mcrypt php-apc php5-mcrypt \
+      supervisor wget git apache2 libapache2-mod-php \
+      php-mysql php-curl php-xdebug php-intl php-gd php-imagick php-mcrypt php-mcrypt \
       zip unzip phpmyadmin  && \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
@@ -37,7 +37,7 @@ ADD supervisord-apache2.conf /etc/supervisor/conf.d/supervisord-apache2.conf
 # config to enable .htaccess
 ADD apache_default /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
-RUN php5enmod mcrypt
+RUN phpenmod mcrypt
 
 # configure php/xdebug/opcache
 RUN echo 'xdebug.remote_enable=1 \n\
@@ -48,8 +48,8 @@ xdebug.idekey="PHPSTORM" \n\
 xdebug.profiler_enable=0 \n\
 xdebug.profiler_output_dir="/tmp/profiler/" \n\
 xdebug.max_nesting_level=300 \n\
-xdebug.var_display_max_depth=4 ' >> /etc/php5/mods-available/xdebug.ini
-RUN echo 'display_startup_errors = On\ndisplay_errors = On' >> /etc/php5/apache2/php.ini
+xdebug.var_display_max_depth=4 ' >> /etc/php/7.0/mods-available/xdebug.ini
+RUN echo 'display_startup_errors = On\ndisplay_errors = On' >> /etc/php/7.0/apache2/php.ini
 
 # install composer
 RUN php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php && \

@@ -4,7 +4,7 @@ apache:
     - "50080:80"
     - "50022:22"
   volumes:
-      - ./src:/app
+      - ../src:/app
   links:
     - mysql
   environment:
