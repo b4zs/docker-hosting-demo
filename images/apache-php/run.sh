@@ -14,7 +14,7 @@ if [ -n "$VAGRANT_OSX_MODE" ];then
 else
     # Tweaks to give Apache/PHP write permissions to the app
     chown -R www-data:staff /var/www
-    chown -R www-data:staff /app
+    #chown -R www-data:staff /app
 fi
 
 #configure phpmyadmin
