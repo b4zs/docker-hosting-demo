@@ -19,49 +19,59 @@ RUN groupmod -g ${BOOT2DOCKER_GID} staff
 
 # Install packages
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && \
-  apt-get -y install \
-      supervisor wget git apache2 libapache2-mod-php \
-      php-mysql php-curl php-xdebug php-intl php-gd php-imagick php-mcrypt php-mcrypt \
+RUN add-apt-repository -y ppa:ondrej/php
+RUN apt-get update
+RUN apt-get -y --allow-unauthenticated install \
+      supervisor wget git apache2 libapache2-mod-php7.1 \
+      php7.1-soap php7.1-mcrypt \
+      php7.1-mysql php7.1-curl php7.1-xdebug php7.1-intl php7.1-gd php7.1-imagick php7.1-mcrypt \
       zip unzip phpmyadmin  && \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
+RUN echo 'root:root' | chpasswd
+RUN apt-get -y install openssh-server
+RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+
+RUN apt-get -y install iputils-ping dnsutils
 
 
 # Add image configuration and scripts
 ADD start-apache2.sh /start-apache2.sh
 ADD run.sh /run.sh
 RUN chmod 755 /*.sh && chmod 644 /etc/phpmyadmin/config-db.php
-ADD supervisord-apache2.conf /etc/supervisor/conf.d/supervisord-apache2.conf
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+ADD root/bin root/bin
 # config to enable .htaccess
 ADD apache_default /etc/apache2/sites-available/000-default.conf
+ADD apache_macros.conf /etc/apache2/conf-enabled/apache_macros.conf
 RUN a2enmod rewrite
+RUN a2enmod macro
 RUN phpenmod mcrypt
 
 # configure php/xdebug/opcache
 RUN echo 'xdebug.remote_enable=1 \n\
-xdebug.remote_host=host \n\
+xdebug.remote_host=172.17.0.1 \n\
 xdebug.remote_port="9000" \n\
 xdebug.remote_connect_back=1 \n\
 xdebug.idekey="PHPSTORM" \n\
 xdebug.profiler_enable=0 \n\
 xdebug.profiler_output_dir="/tmp/profiler/" \n\
 xdebug.max_nesting_level=300 \n\
-xdebug.var_display_max_depth=4 ' >> /etc/php/7.0/mods-available/xdebug.ini
-RUN echo 'display_startup_errors = On\ndisplay_errors = On' >> /etc/php/7.0/apache2/php.ini
+xdebug.var_display_max_depth=4 ' >> /etc/php/7.1/mods-available/xdebug.ini
+RUN echo 'display_startup_errors = On\ndisplay_errors = On\ndate.timezone=Europe/Budapest' >> /etc/php/7.1/apache2/php.ini
+RUN echo 'display_startup_errors = On\ndisplay_errors = On\ndate.timezone=Europe/Budapest' >> /etc/php/7.1/cli/php.ini
 
 # install composer
 RUN php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php && \
     php composer-setup.php --install-dir=bin --filename=composer && \
     rm composer-setup.php
 
-# Configure /app folder with sample app
-RUN mkdir -p /app && rm -fr /var/www && ln -s /app /var/www
+RUN mkdir /var/www/public_html
 
 #Environment variables to configure php
 ENV PHP_UPLOAD_MAX_FILESIZE 100M
 ENV PHP_POST_MAX_SIZE 10M
-
+WORKDIR /var/www
 EXPOSE 80
 CMD ["/run.sh"]

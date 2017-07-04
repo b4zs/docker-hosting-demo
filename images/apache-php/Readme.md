@@ -10,9 +10,6 @@ the compose file maps the internal ports of the containers as follows:
 50022: ssh
 53306: mysql
 
-In order to connect to the database from a php app, use host "mysqld", port 3306, and the default user:
-admin
-gbwebdesign
 
 #directories: 
 

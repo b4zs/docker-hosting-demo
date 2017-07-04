@@ -4,27 +4,24 @@ apache:
     - "50080:80"
     - "50022:22"
   volumes:
-      - ../src:/app
+      - ./src:/var/www
   links:
     - mysql
   environment:
     VIRTUAL_HOST: app.proxy
 mysql:
-  image: dgraziotin/mysql
+  image: mysql
   ports:
     - "53306:3306"
-  volumes: 
+  volumes:
     - ./var/mysql:/var/lib/mysql
   environment:
-    MYSQL_ADMIN_PASS: gbwebdesign
-    CREATE_MYSQL_BASIC_USER_AND_DB: "true"
-    MYSQL_USER_NAME: usr
-    MYSQL_USER_PASS: pwd
-    MYSQL_USER_DB: db
+    MYSQL_ROOT_PASSWORD: example
+    MYSQL_ROOT_HOST: '%'
 proxy:
   image: jwilder/nginx-proxy
   ports:
-    - 80:80
+    - 8080:80
   links:
     - apache
     - helloworld

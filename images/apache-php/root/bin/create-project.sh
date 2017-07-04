@@ -10,7 +10,7 @@ if [[ ${#PROJECTNAME} -gt 16 ]]; then echo "Project name is too long."; exit; fi
 if [ -z "$PROJECTPASS" ]; then read -p "Project password: " PROJECTPASS; fi
 echo ""
 
-RUNTIME="php"
+RUNTIME="no"
 # read -e -p "Runtime (no, php, nodejs): " -i ${RUNTIME} RUNTIME
 
 DOCROOT="public_html"
@@ -31,5 +31,5 @@ echo "Create project: $PROJECTNAME"
 ./create-www_reg_projectvhost.sh $PROJECTNAME $DOCROOT $DOMAIN $RUNTIME
 ./create-mysql_projectdb.sh $PROJECTNAME $PROJECTPASS
 #./create-psql_projectdb.sh $PROJECTNAME $PROJECTPASS
-./create-ftp_project_user.sh $PROJECTNAME $PROJECTPASS
+#./create-ftp_project_user.sh $PROJECTNAME $PROJECTPASS
 #./create-git_project.sh $PROJECTNAME
