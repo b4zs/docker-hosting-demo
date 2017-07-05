@@ -20,7 +20,7 @@ fi
 echo "activate vhost: $PROJECTNAME"
 
 if [ ! -h "/etc/apache2/sites-enabled/100-$PROJECTNAME" ]; then
-	ln -s /etc/apache2/sites-available/$PROJECTNAME /etc/apache2/sites-enabled/100-$PROJECTNAME
+	ln -s /etc/apache2/sites-available/$PROJECTNAME /etc/apache2/sites-enabled/100-$PROJECTNAME.conf
 	CHECKCONF=`apache2ctl -t 2>&1`
 	if [ "$CHECKCONF" = "Syntax OK" ]; then
 		/etc/init.d/apache2 reload

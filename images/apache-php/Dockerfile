@@ -35,12 +35,6 @@ RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 RUN apt-get -y install iputils-ping dnsutils
 
 
-# Add image configuration and scripts
-ADD start-apache2.sh /start-apache2.sh
-ADD run.sh /run.sh
-RUN chmod 755 /*.sh && chmod 644 /etc/phpmyadmin/config-db.php
-ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
 ADD root/bin root/bin
 RUN chmod +x /root/bin/*
 # config to enable .htaccess
@@ -69,6 +63,12 @@ RUN php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php
     rm composer-setup.php
 
 RUN mkdir /var/www/public_html
+
+# Add image configuration and scripts
+ADD start-apache2.sh /start-apache2.sh
+ADD run.sh /run.sh
+RUN chmod 755 /*.sh && chmod 644 /etc/phpmyadmin/config-db.php
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 #Environment variables to configure php
 ENV PHP_UPLOAD_MAX_FILESIZE 100M
