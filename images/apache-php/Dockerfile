@@ -31,6 +31,9 @@ RUN apt-get -y --allow-unauthenticated install \
 RUN echo 'root:root' | chpasswd
 RUN apt-get -y install openssh-server
 RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+ADD ssh/ssh_host* /etc/ssh/
+RUN echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCfnbIf6kbcyVMATlh9WCEcQt8IG9ZeQyVgwLWOMf9/MEDpn2LXFxfLwRdXm63KJRuN/TTCQeihcr3n5zPN2fLm39WnNCnTnot45+z7Pgjft/v6w6wmcS8MShe9LZzJxBFOI+RYGBgxsnjyk+fEM3jQvsSdzEoAf31Jhjsbe+hMx9pyKbQfg3i6oynZXvrOINH5WS4dbd/WIR1ZgFO/qhdQYydDIZ/2vWNVivK5OJo59Ce3rdiFn5aZ5v15f0+8UNFGakLCqUQ9T4Glwl0FRr87kyg8Q4kgeaPmDt6wcFlZHWE+mJHIMio0p+XNK5hOiCG/tIReXGr77A0t5ZivwZhR b4zs@b4zs-mbp.local' >> /root/.ssh/authorized_keys
+
 
 RUN apt-get -y install iputils-ping dnsutils
 

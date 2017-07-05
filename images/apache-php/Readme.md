@@ -16,3 +16,6 @@ the compose file maps the internal ports of the containers as follows:
 ../src: mapped to /var/www
 ../src/html: mapped to /var/www/html <- this is the document root for the webserver
 ../mysql: mapped to /var/lib/mysql <- data directory for mysql
+
+
+ssh root@127.0.0.1 -p50022 -i images/apache-php/ssh_key
