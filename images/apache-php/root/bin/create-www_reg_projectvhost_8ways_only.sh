@@ -14,7 +14,7 @@ fi
 echo "create www project vhost: $PROJECTNAME"
 
 if [ ! -f "/etc/apache2/sites-available/$PROJECTNAME" ]; then
-	echo "Use ProjectVhost \"$PROJECTNAME\" \"$DOMAIN\" \" \"" > /etc/apache2/sites-available/$PROJECTNAME
+	echo "Use 8waysOnlyProjectVhost \"$PROJECTNAME\" \"$DOMAIN\" \" \"" > /etc/apache2/sites-available/$PROJECTNAME
 fi
 
 echo "activate vhost: $PROJECTNAME"

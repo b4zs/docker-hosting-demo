@@ -1,22 +1,23 @@
 #!/bin/bash
-
 PROJECTNAME="$1"
-DOCROOT="$2"
-RUNTIME="$3"
+DOMAIN="$2"
 
-if [ -z "$PROJECTNAME" ]; then read -p "Project name: " PROJECTNAME; fi
-if [ -z "$PROJECTNAME" ]; then exit; fi
+if [ -z "$PROJECTNAME" ]; then
+    exit
+fi
 
-if [ -z "$RUNTIME" ]; then RUNTIME="php"; fi
-if [ -z "$DOCROOT" ]; then DOCROOT="public_html"; fi
+if [ -z "$DOMAIN" ]; then
+    DOMAIN=$PROJECTNAME
+fi
 
-echo "Creating www project: \"$PROJECTNAME\" with docroot \"$DOCROOT\", runtime: \"$RUNTIME\""
+echo "Creating www project: \"$PROJECTNAME\" with domain \"$DOMAIN\""
 
 if [ ! -d "/var/www/$PROJECTNAME" ]; then
-        mkdir -p /var/www/$PROJECTNAME/$DOCROOT
-        if [ "nodejs" == $RUNTIME ]; then
-            mkdir -p /var/www/$PROJECTNAME/tmp
-        fi
-        chown www-data:www-data -R /var/www/$PROJECTNAME
-        touch /var/www/$PROJECTNAME/$DOCROOT/.keep
+	mkdir /var/www/$PROJECTNAME
+	mkdir /var/www/$PROJECTNAME/public_html
+#	echo "$DOMAIN" > /var/www/$PROJECTNAME/public_html/index.html
+	chown www-data:www-data -R /var/www/$PROJECTNAME
+	mkdir /var/www/$PROJECTNAME/log
+	touch /var/www/$PROJECTNAME/public_html/.keep
 fi
+

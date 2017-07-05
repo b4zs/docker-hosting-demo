@@ -42,6 +42,7 @@ RUN chmod 755 /*.sh && chmod 644 /etc/phpmyadmin/config-db.php
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ADD root/bin root/bin
+RUN chmod +x /root/bin/*
 # config to enable .htaccess
 ADD apache_default /etc/apache2/sites-available/000-default.conf
 ADD apache_macros.conf /etc/apache2/conf-enabled/apache_macros.conf
